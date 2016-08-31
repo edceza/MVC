@@ -3,7 +3,8 @@ program MVC;
 uses
   Vcl.Forms,
   Main in 'Main.pas' {Form1},
-  GlobalInterfaces in 'GlobalInterfaces.pas';
+  GlobalInterfaces in 'GlobalInterfaces.pas',
+  SQLLiteConnection in 'SQLLiteConnection.pas';
 
 {$R *.res}
 

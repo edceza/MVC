@@ -3,3 +3,4 @@ __recovery
 Win32
 *.local
 *.identcache
+*.stat

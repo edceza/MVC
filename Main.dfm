@@ -21,13 +21,16 @@ object Form1: TForm1
     Height = 499
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 40
-    ExplicitTop = 48
-    ExplicitWidth = 289
-    ExplicitHeight = 193
   end
   object MainMenu1: TMainMenu
     Left = 120
     Top = 56
+  end
+  object FDConnection1: TFDConnection
+    Params.Strings = (
+      'Database=MVC.sdb'
+      'DriverID=SQLite')
+    Left = 288
+    Top = 132
   end
 end
