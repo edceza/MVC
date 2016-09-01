@@ -4,7 +4,10 @@ uses
   Vcl.Forms,
   Main in 'Main.pas' {Form1},
   GlobalInterfaces in 'GlobalInterfaces.pas',
-  SQLLiteConnection in 'SQLLiteConnection.pas';
+  DBX_Connection in 'DBX_Connection.pas',
+  SimpleDataSet in 'SimpleDataSet.pas',
+  Functions in 'Functions.pas',
+  MVC_Config in 'MVC_Config.pas';
 
 {$R *.res}
 
