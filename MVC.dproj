@@ -96,6 +96,22 @@
         <DCCReference Include="SimpleDataSet.pas"/>
         <DCCReference Include="Functions.pas"/>
         <DCCReference Include="MVC_Config.pas"/>
+        <DCCReference Include="Model.pas"/>
+        <DCCReference Include="dm_Custom.pas">
+            <Form>dmCustom</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Frame_Custom.pas">
+            <Form>FrameCustom</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Frame_CustomDBGrid.pas">
+            <Form>TFrameCustomDBGrid</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

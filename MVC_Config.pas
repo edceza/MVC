@@ -22,14 +22,14 @@ var
 implementation
 
 uses
-  SQLLiteConnection;
+  DBX_Connection;
 
 { TMVCConfig }
 
 constructor TMVCConfig.Create(AOwner: TComponent);
 begin
   inherited;
-  FConnection := TSQLLiteConnection.Create(Self);
+  FConnection := TDBXConnection.Create(Self);
 end;
 
 class function TMVCConfig.GetInstance: TMVCConfig;

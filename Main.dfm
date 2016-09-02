@@ -23,14 +23,7 @@ object Form1: TForm1
     TabOrder = 0
   end
   object MainMenu1: TMainMenu
-    Left = 120
-    Top = 56
-  end
-  object FDConnection1: TFDConnection
-    Params.Strings = (
-      'Database=MVC.sdb'
-      'DriverID=SQLite')
-    Left = 288
-    Top = 132
+    Left = 56
+    Top = 24
   end
 end

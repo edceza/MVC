@@ -11,18 +11,21 @@ type
     con: TSQLConnection;
   public
     constructor Create(AOwner: TComponent); override;
+
+    function GetDataSet(AOwner: TComponent): TDataSet;
+    function StartTransaction: TObject;
+
     procedure Connect;
     procedure Disconect;
     procedure Commit(var Transaction: TObject);
+    procedure RaiseException(ErrorMessage: string; UpdateKind: TUpdateKind);
     procedure Rollback(var Transaction: TObject);
-    function StartTransaction: TObject;
-    function GetDataSet(AOwner: TComponent): TDataSet;
   end;
 
 implementation
 
 uses
-  Data.DBXCommon;
+  Data.DBXCommon, System.SysUtils;
 
 { TDBXConnection }
 
@@ -90,6 +93,12 @@ begin
 
   Result := TSQLQuery.Create(AOwner);
   TSQLQuery(Result).SQLConnection := con;
+end;
+
+procedure TDBXConnection.RaiseException(ErrorMessage: string;
+  UpdateKind: TUpdateKind);
+begin
+  raise Exception.Create(ErrorMessage);
 end;
 
 procedure TDBXConnection.Rollback(var Transaction: TObject);

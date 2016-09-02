@@ -14,6 +14,7 @@ type
     procedure Commit(var Transaction: TObject);
     procedure Connect;
     procedure Disconect;
+    procedure RaiseException(ErrorMessage: string; UpdateKind: TUpdateKind);
     procedure Rollback(var Transaction: TObject);
   end;
 
@@ -26,25 +27,17 @@ type
     function StartTransaction: TObject;
 
     procedure Commit(Transaction: TObject);
+    procedure ApplyUpdates(UpdateKind: TUpdateKind = ukModify);
     procedure DataSetAfterOpen(DataSet: TDataSet);
     procedure Rollback(Transaction: TObject);
-    procedure SetConnection(Value: IConnection);
     procedure SetMainDataSet(Value: TClientDataSet);
 
-    property Connection: IConnection read GetConnection write SetConnection;
+    property Connection: IConnection read GetConnection;
     property MainDataSet: TClientDataSet read GetMainDataSet write SetMainDataSet;
     property SimpleDataSet: TSimpleDataSet read GetSimpleDataSet;
   end;
 
-  IFrame = interface
-  ['{77ED2A5C-8826-4A99-9CFB-A5C4E311A379}']
-    function GetMainDataSource: TDataSource;
-    function GetModel: IModel;
-    procedure SetMainDataSource(Value: TDataSource);
-    procedure SetModel(Value: IModel);
-    property MainDataSource: TDataSource read GetMainDataSource write SetMainDataSource;
-    property Model: IModel read GetModel write SetModel;
-  end;
+  IFrame = interface;
 
   IController = interface
   ['{16787CBD-58F7-4210-83F6-65DC48754763}']
@@ -54,6 +47,13 @@ type
     procedure SetModel(Value: IModel);
     property Frame: IFrame read GetFrame write SetFrame;
     property Model: IModel read GetModel write SetModel;
+  end;
+
+  IFrame = interface
+  ['{77ED2A5C-8826-4A99-9CFB-A5C4E311A379}']
+    function GetController: IController;
+    procedure SetController(Value: IController);
+    property Controller: IController read GetController write SetController;
   end;
 
 implementation
