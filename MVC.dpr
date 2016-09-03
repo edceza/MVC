@@ -9,9 +9,7 @@ uses
   Functions in 'Functions.pas',
   MVC_Config in 'MVC_Config.pas',
   Model in 'Model.pas',
-  dm_Custom in 'dm_Custom.pas' {dmCustom: TDataModule},
-  Frame_Custom in 'Frame_Custom.pas' {FrameCustom: TFrame},
-  Frame_CustomDBGrid in 'Frame_CustomDBGrid.pas' {TFrameCustomDBGrid: TFrame};
+  Frame_CustomDBGrid in 'Frame_CustomDBGrid.pas' {FrameCustom: TFrame};
 
 {$R *.res}
 
@@ -19,6 +17,5 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TForm1, Form1);
-  Application.CreateForm(TdmCustom, dmCustom);
   Application.Run;
 end.

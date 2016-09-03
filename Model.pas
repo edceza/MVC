@@ -3,11 +3,10 @@ unit Model;
 interface
 
 uses
-  System.Classes, GlobalInterfaces, Data.DB, Datasnap.DBClient, SimpleDataSet,
-  dm_Custom;
+  System.Classes, GlobalInterfaces, Data.DB, Datasnap.DBClient, SimpleDataSet;
 
 type
-  TModel = class(TdmCustom, IModel)
+  TModel = class(TComponent, IModel)
   protected
     procedure DataSetAfterOpen(DataSet: TDataSet); virtual;
     procedure ApplyUpdates(UpdateKind: TUpdateKind = ukModify); virtual;
@@ -19,11 +18,11 @@ type
     FConnection: IConnection;
     FMainDataset: TClientDataSet;
     function GetConnection: IConnection;
-    function GetDataSetFromSQL(sql: string): TClientDataSet;
+    function GetDataSetFromSQL(const sql: string): TClientDataSet;
     function GetMainDataSet: TClientDataSet;
     function GetSimpleDataSet: TSimpleDataSet;
 
-    procedure SetMainDataSet(Value: TClientDataSet);
+    procedure SetMainDataSet(const Value: TClientDataSet);
   public
     constructor Create(AOwner: TComponent; sql: string); reintroduce; overload; virtual;
 
@@ -86,7 +85,7 @@ begin
   Result := FConnection;
 end;
 
-function TModel.GetDataSetFromSQL(sql: string): TClientDataSet;
+function TModel.GetDataSetFromSQL(const sql: string): TClientDataSet;
 begin
   FSimpleDataSet := TSimpleDataSet.Create(Self, FConnection.GetDataSet(Self));
   FSimpleDataSet.ClientDataSet.CommandText := sql;
@@ -116,7 +115,7 @@ begin
   FConnection.Rollback(Transaction);
 end;
 
-procedure TModel.SetMainDataSet(Value: TClientDataSet);
+procedure TModel.SetMainDataSet(const Value: TClientDataSet);
 begin
   FMainDataset := Value;
 end;

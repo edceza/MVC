@@ -21,7 +21,7 @@ type
   IModel = interface
   ['{A1517EE6-4FEF-4EE7-8CC2-07CF9CFE0941}']
     function GetConnection: IConnection;
-    function GetDataSetFromSQL(sql: string): TClientDataSet;
+    function GetDataSetFromSQL(const sql: string): TClientDataSet;
     function GetMainDataSet: TClientDataSet;
     function GetSimpleDataSet: TSimpleDataSet;
     function StartTransaction: TObject;
@@ -30,7 +30,7 @@ type
     procedure ApplyUpdates(UpdateKind: TUpdateKind = ukModify);
     procedure DataSetAfterOpen(DataSet: TDataSet);
     procedure Rollback(Transaction: TObject);
-    procedure SetMainDataSet(Value: TClientDataSet);
+    procedure SetMainDataSet(const Value: TClientDataSet);
 
     property Connection: IConnection read GetConnection;
     property MainDataSet: TClientDataSet read GetMainDataSet write SetMainDataSet;
@@ -43,8 +43,8 @@ type
   ['{16787CBD-58F7-4210-83F6-65DC48754763}']
     function GetFrame: IFrame;
     function GetModel: IModel;
-    procedure SetFrame(Value: IFrame);
-    procedure SetModel(Value: IModel);
+    procedure SetFrame(const Value: IFrame);
+    procedure SetModel(const Value: IModel);
     property Frame: IFrame read GetFrame write SetFrame;
     property Model: IModel read GetModel write SetModel;
   end;
@@ -52,7 +52,7 @@ type
   IFrame = interface
   ['{77ED2A5C-8826-4A99-9CFB-A5C4E311A379}']
     function GetController: IController;
-    procedure SetController(Value: IController);
+    procedure SetController(const Value: IController);
     property Controller: IController read GetController write SetController;
   end;
 
