@@ -51,7 +51,7 @@ begin
   con.DriverName := 'Firebird';
   con.LoginPrompt := False;
   con.Params.Add('DriverName=Firebird');
-  con.Params.Add('Database=C:\Users\cassi\Desktop\MVC\MVC.FDB');
+  con.Params.Add('Database=MVC.FDB');
   con.Params.Add('RoleName=RoleName');
   con.Params.Add('User_Name=sysdba');
   con.Params.Add('Password=123');
