@@ -9,7 +9,11 @@ uses
   Functions in 'Functions.pas',
   MVC_Config in 'MVC_Config.pas',
   Model in 'Model.pas',
-  Frame_CustomDBGrid in 'Frame_CustomDBGrid.pas' {FrameCustom: TFrame};
+  Unidade_Controller in 'Unidade\Unidade_Controller.pas',
+  Unidade_Model in 'Unidade\Unidade_Model.pas',
+  Controller in 'Controller.pas',
+  Frame_Custom in 'Frame_Custom.pas' {FrameCustom: TFrame},
+  Frame_CustomDBGrid in 'Frame_CustomDBGrid.pas' {FrameCustomDBGrid: TFrame};
 
 {$R *.res}
 

@@ -3,63 +3,74 @@ unit Frame_CustomDBGrid;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Actions,
-  Vcl.ActnList, Data.DB, GlobalInterfaces, Datasnap.DBClient, Vcl.ExtCtrls,
-  Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Frame_Custom, System.Actions,
+  Vcl.ActnList, Data.DB, System.ImageList, Vcl.ImgList, cxGraphics,
+  dxLayoutLookAndFeels, cxClasses, cxControls, cxLookAndFeels,
+  cxLookAndFeelPainters, dxLayoutContainer, dxNavBar, dxLayoutControl,
+  dxNavBarCollns, dxNavBarBase, dxLayoutControlAdapters, Vcl.Menus,
+  Vcl.StdCtrls, cxButtons, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls;
 
 type
-  TFrameCustom = class(TFrame, IFrame)
-    dsMain: TDataSource;
-    actList: TActionList;
-    actClose: TAction;
+  TFrameCustomDBGrid = class(TFrameCustom)
     actInsert: TAction;
     actEdit: TAction;
     actDelete: TAction;
     actPost: TAction;
     actCancel: TAction;
+    actFiltrar: TAction;
+    imglist: TcxImageList;
+    dxLayoutLookAndFeelList1: TdxLayoutLookAndFeelList;
+    dxLayoutStandardLookAndFeel1: TdxLayoutStandardLookAndFeel;
+    d: TdxLayoutGroup;
+    dxLayoutControl1: TdxLayoutControl;
+    dxNavBar1: TdxNavBar;
+    liNavBar: TdxLayoutItem;
+    dxNavBar1Group1: TdxNavBarGroup;
+    dxNavBar1Item1: TdxNavBarItem;
+    dxNavBar1Item2: TdxNavBarItem;
+    dxNavBar1Item3: TdxNavBarItem;
     pFiltro: TPanel;
-    btFiltrar: TButton;
-    ToolBar1: TToolBar;
-    ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
-    ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
-    ToolButton6: TToolButton;
-    procedure actCloseExecute(Sender: TObject);
-    procedure actInsertExecute(Sender: TObject);
-    procedure actInsertUpdate(Sender: TObject);
-    procedure actEditExecute(Sender: TObject);
-    procedure actEditUpdate(Sender: TObject);
-    procedure actDeleteExecute(Sender: TObject);
-    procedure actDeleteUpdate(Sender: TObject);
-    procedure actPostExecute(Sender: TObject);
-    procedure actPostUpdate(Sender: TObject);
+    liFiltro: TdxLayoutItem;
+    gGrid: TDBGrid;
+    liGrid: TdxLayoutItem;
+    btPost: TcxButton;
+    liPost: TdxLayoutItem;
+    btCancel: TcxButton;
+    liCancel: TdxLayoutItem;
+    btFiltrar: TcxButton;
+    lgContainer: TdxLayoutGroup;
+    lgGroup: TdxLayoutGroup;
     procedure actCancelExecute(Sender: TObject);
+    procedure actInsertExecute(Sender: TObject);
+    procedure actEditExecute(Sender: TObject);
+    procedure actDeleteExecute(Sender: TObject);
+    procedure actPostExecute(Sender: TObject);
+    procedure actFiltrarExecute(Sender: TObject);
+    procedure actFiltrarUpdate(Sender: TObject);
     procedure actCancelUpdate(Sender: TObject);
+    procedure actPostUpdate(Sender: TObject);
+    procedure actDeleteUpdate(Sender: TObject);
+    procedure actEditUpdate(Sender: TObject);
+    procedure actInsertUpdate(Sender: TObject);
   private
-    FController: IController;
     FTransaction: TObject;
-    procedure SetController(const Value: IController);
-    function GetController: IController;
+    procedure ConfigFilters;
   public
-    { Public declarations }
-    constructor Create(AOwner: TComponent); override;
-
-    property Controller: IController read GetController write SetController;
+    procedure ReloadFrame; override;
   end;
+
+var
+  FrameCustomDBGrid: TFrameCustomDBGrid;
 
 implementation
 
 uses
-  SimpleDataSet;
+  cxTextEdit, Datasnap.DBClient, cxLabel, System.Math;
 
 {$R *.dfm}
 
-{ TFrameCustom }
-
-procedure TFrameCustom.actCancelExecute(Sender: TObject);
+procedure TFrameCustomDBGrid.actCancelExecute(Sender: TObject);
 begin
   inherited;
   if (Application.MessageBox('Atenção! A ação CANCELAR irá perder as últimas alterações realizadas. Tem certeza?', 'Atenção', MB_ICONQUESTION + MB_YESNO) = mrYes) then
@@ -69,39 +80,79 @@ begin
   end;
 end;
 
-procedure TFrameCustom.actCancelUpdate(Sender: TObject);
+procedure TFrameCustomDBGrid.actCancelUpdate(Sender: TObject);
 begin
+  inherited;
   actCancel.Enabled := (dsMain.DataSet <> nil) and (dsMain.DataSet.State in dsEditModes);
 end;
 
-procedure TFrameCustom.actCloseExecute(Sender: TObject);
+procedure TFrameCustomDBGrid.actDeleteExecute(Sender: TObject);
 begin
-  PostMessage(Handle, WM_CLOSE, 0, 0);
+  inherited;
+  if (Application.MessageBox('Atenção! Você mandou excluir o registro selecionado, deseja continuar?', 'Atenção', MB_ICONQUESTION + MB_YESNO) = mrYes) then
+  begin
+    FTransaction := Controller.Model.StartTransaction;
+    try
+      dsMain.DataSet.Delete;
+      Controller.Model.ApplyUpdates;
+      Controller.Model.Commit(FTransaction);
+    except
+      Controller.Model.Rollback(FTransaction);
+      raise;
+    end;
+  end;
 end;
 
-procedure TFrameCustom.actDeleteExecute(Sender: TObject);
+procedure TFrameCustomDBGrid.actDeleteUpdate(Sender: TObject);
 begin
-  FTransaction := Controller.Model.StartTransaction;
-  dsMain.DataSet.Delete;
-end;
-
-procedure TFrameCustom.actDeleteUpdate(Sender: TObject);
-begin
+  inherited;
   actDelete.Enabled := (dsMain.DataSet <> nil) and (not dsMain.DataSet.IsEmpty) and (not (dsMain.DataSet.State in dsEditModes));
 end;
 
-procedure TFrameCustom.actEditExecute(Sender: TObject);
+procedure TFrameCustomDBGrid.actEditExecute(Sender: TObject);
 begin
+  inherited;
   FTransaction := Controller.Model.StartTransaction;
   dsMain.DataSet.Edit;
 end;
 
-procedure TFrameCustom.actEditUpdate(Sender: TObject);
+procedure TFrameCustomDBGrid.actEditUpdate(Sender: TObject);
 begin
+  inherited;
   actEdit.Enabled := (dsMain.DataSet <> nil) and (not dsMain.DataSet.IsEmpty) and (not (dsMain.DataSet.State in dsEditModes));
 end;
 
-procedure TFrameCustom.actInsertExecute(Sender: TObject);
+procedure TFrameCustomDBGrid.actFiltrarExecute(Sender: TObject);
+var
+  I: Integer;
+  sql: string;
+  F: TcxTextEdit;
+begin
+  inherited;
+  dsMain.DataSet.Close;
+  sql := Controller.Model.SimpleDataSet.SQLDefault;
+  for I := 0 to pFiltro.ComponentCount - 1 do
+  begin
+    if pFiltro.Components[I].ClassType = TcxTextEdit then
+    begin
+      F := TcxTextEdit(pFiltro.Components[I]);
+      if Trim(F.Text) <> '' then
+      begin
+        sql := sql + ' and ' + Controller.Model.FilterList.Values[Copy(F.Name, 3, Length(F.Name))] + ' = ' + QuotedStr(F.Text);
+      end;
+    end;
+  end;
+  Controller.Model.MainDataSet.CommandText := sql;
+  dsMain.DataSet.Open;
+end;
+
+procedure TFrameCustomDBGrid.actFiltrarUpdate(Sender: TObject);
+begin
+  inherited;
+//
+end;
+
+procedure TFrameCustomDBGrid.actInsertExecute(Sender: TObject);
 begin
   inherited;
   if not dsMain.DataSet.Active then
@@ -118,13 +169,15 @@ begin
     dsMain.DataSet.Append;
 end;
 
-procedure TFrameCustom.actInsertUpdate(Sender: TObject);
+procedure TFrameCustomDBGrid.actInsertUpdate(Sender: TObject);
 begin
+  inherited;
   actInsert.Enabled := (dsMain.DataSet <> nil) and (not (dsMain.DataSet.State in dsEditModes));
 end;
 
-procedure TFrameCustom.actPostExecute(Sender: TObject);
+procedure TFrameCustomDBGrid.actPostExecute(Sender: TObject);
 begin
+  inherited;
   try
     Controller.Model.ApplyUpdates;
   except
@@ -139,33 +192,48 @@ begin
   Controller.Model.Commit(FTransaction);
 end;
 
-procedure TFrameCustom.actPostUpdate(Sender: TObject);
+procedure TFrameCustomDBGrid.actPostUpdate(Sender: TObject);
 begin
+  inherited;
   actPost.Enabled := (dsMain.DataSet <> nil) and (dsMain.DataSet.State in dsEditModes);
 end;
 
-constructor TFrameCustom.Create(AOwner: TComponent);
+procedure TFrameCustomDBGrid.ConfigFilters;
 var
-  i: Integer;
+  I: Integer;
+  F: TcxTextEdit;
+  L: TcxLabel;
+  iL, iT: Integer;
+begin
+  if Assigned(Controller.Model) then
+  begin
+    iL := 0;
+    iT := 0;
+    for I := 0 to Controller.Model.FilterList.Count - 1 do
+    begin
+      L := TcxLabel.Create(pFiltro);
+      L.Name := 'l' + Controller.Model.FilterList.Names[I];
+      L.Caption := Controller.Model.FilterList.Names[I];
+      L.Parent := pFiltro;
+      L.Left := IL;
+      L.Top := IT;
+
+      F := TcxTextEdit.Create(pFiltro);
+      F.Name := 'te' + Controller.Model.FilterList.Names[I];
+      F.Text := '';
+      F.Parent := pFiltro;
+      F.Left := IL;
+      F.Top := IT + 3 + L.Height;
+
+      IL := Max(L.Width, F.Width) + 6;
+    end;
+  end;
+end;
+
+procedure TFrameCustomDBGrid.ReloadFrame;
 begin
   inherited;
-  i := 0;
-  while AOwner.FindComponent(ClassName + IntToStr(i)) <> nil do
-    Inc(i);
-  Name := ClassName + IntToStr(i);
-
-  DoubleBuffered := True;
-  TabStop := False;
-end;
-
-function TFrameCustom.GetController: IController;
-begin
-  Result := FController;
-end;
-
-procedure TFrameCustom.SetController(const Value: IController);
-begin
-  FController := Value;
+  ConfigFilters;
 end;
 
 end.

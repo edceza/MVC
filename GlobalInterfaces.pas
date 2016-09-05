@@ -24,6 +24,7 @@ type
     function GetDataSetFromSQL(const sql: string): TClientDataSet;
     function GetMainDataSet: TClientDataSet;
     function GetSimpleDataSet: TSimpleDataSet;
+    function GetFilterList: TStringList;
     function StartTransaction: TObject;
 
     procedure Commit(Transaction: TObject);
@@ -35,6 +36,7 @@ type
     property Connection: IConnection read GetConnection;
     property MainDataSet: TClientDataSet read GetMainDataSet write SetMainDataSet;
     property SimpleDataSet: TSimpleDataSet read GetSimpleDataSet;
+    property FilterList: TStringList read GetFilterList;
   end;
 
   IFrame = interface;
@@ -43,15 +45,14 @@ type
   ['{16787CBD-58F7-4210-83F6-65DC48754763}']
     function GetFrame: IFrame;
     function GetModel: IModel;
-    procedure SetFrame(const Value: IFrame);
-    procedure SetModel(const Value: IModel);
-    property Frame: IFrame read GetFrame write SetFrame;
-    property Model: IModel read GetModel write SetModel;
+    property Frame: IFrame read GetFrame;
+    property Model: IModel read GetModel;
   end;
 
   IFrame = interface
   ['{77ED2A5C-8826-4A99-9CFB-A5C4E311A379}']
     function GetController: IController;
+    procedure ReloadFrame;
     procedure SetController(const Value: IController);
     property Controller: IController read GetController write SetController;
   end;

@@ -12,11 +12,13 @@ type
     FClientDataSet: TClientDataSet;
     FDataSetProvider: TDataSetProvider;
     FQuery: TDataSet;
+    FSQLDefault: string;
   public
     constructor Create(AOwner: TComponent; AQuery: TDataSet); reintroduce; overload;
     property ClientDataSet: TClientDataSet read FClientDataSet;
     property DataSetProvider: TDataSetProvider read FDataSetProvider;
     property Query: TDataSet read FQuery;
+    property SQLDefault: string read FSQLDefault write FSQLDefault;
   end;
 
 implementation
